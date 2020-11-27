@@ -27,22 +27,34 @@ public class ScoreScreen extends Screen {
 	/** Code of last mayus character. */
 	private static final int LAST_CHAR = 90;
 
-	/** Current score. */
-	private int score;
-	/** Player lives left. */
-	private int livesRemaining;
-	/** Total bullets shot by the player. */
-	private int bulletsShot;
-	/** Total ships destroyed by the player. */
-	private int shipsDestroyed;
+	/** Current player 1 score. */
+	private int p1score;
+	/** Current player 2 score. */
+	private int p2score;
+	/** Player 1 lives left. */
+	private int p1livesRemaining;
+	/** Player 2 lives left. */
+	private int p2livesRemaining;
+	/** Total bullets shot by the player 1. */
+	private int p1bulletsShot;
+	/** Total bullets shot by the player 2. */
+	private int p2bulletShot;
+	/** Total ships destroyed by the player 1. */
+	private int p1shipsDestroyed;
+	/** Total ships destroyed by the player 2. */
+	private int p2shipsDestroyed;
 	/** List of past high scores. */
 	private List<Score> highScores;
 	/** Checks if current score is a new high score. */
 	private boolean isNewRecord;
-	/** Player name for record input. */
-	private char[] name;
-	/** Character of players name selected for change. */
-	private int nameCharSelected;
+	/** Player 1 name for record input. */
+	private char[] p1name;
+	/** Player 2 name for record input. */
+	private char[] p2name;
+	/** Character of player 1's name selected for change. */
+	private int p1nameCharSelected;
+	/** Character of player 1's name selected for change. */
+	private int p2nameCharSelected;
 	/** Time between changes in user selection. */
 	private Cooldown selectionCooldown;
 
@@ -62,21 +74,27 @@ public class ScoreScreen extends Screen {
 			final GameState gameState) {
 		super(width, height, fps);
 
-		this.score = gameState.getScore();
-		this.livesRemaining = gameState.getLivesRemaining();
-		this.bulletsShot = gameState.getBulletsShot();
-		this.shipsDestroyed = gameState.getShipsDestroyed();
+		this.p1score = gameState.getScore();
+		this.p2score = gameState.getScore();
+		this.p1livesRemaining = gameState.getLivesRemaining();
+		this.p2livesRemaining = gameState.getLivesRemaining();
+		this.p1bulletsShot = gameState.getBulletsShot();
+		this.p2bulletShot = gameState.getBulletsShot();
+		this.p1shipsDestroyed = gameState.getShipsDestroyed();
+		this.p2shipsDestroyed = gameState.getShipsDestroyed();
 		this.isNewRecord = false;
-		this.name = "AAA".toCharArray();
-		this.nameCharSelected = 0;
+		this.p1name = "AAA".toCharArray();
+		this.p2name = "AAA".toCharArray();
+		this.p1nameCharSelected = 0;
+		this.p2nameCharSelected = 0;
 		this.selectionCooldown = Core.getCooldown(SELECTION_TIME);
 		this.selectionCooldown.reset();
 
 		try {
 			this.highScores = Core.getFileManager().loadHighScores();
-			if (highScores.size() < MAX_HIGH_SCORE_NUM
-					|| highScores.get(highScores.size() - 1).getScore()
-					< this.score)
+			if (highScores.size() < MAX_HIGH_SCORE_NUM ||
+					(highScores.get(highScores.size() - 1).getScore() < this.p1score) ||
+					(highScores.get(highScores.size() - 1).getScore() < this.p2score))
 				this.isNewRecord = true;
 
 		} catch (IOException e) {
@@ -119,27 +137,27 @@ public class ScoreScreen extends Screen {
 
 			if (this.isNewRecord && this.selectionCooldown.checkFinished()) {
 				if (inputManager.isKeyDown(KeyEvent.VK_RIGHT)) {
-					this.nameCharSelected = this.nameCharSelected == 2 ? 0
-							: this.nameCharSelected + 1;
+					this.p1nameCharSelected = this.p1nameCharSelected == 2 ? 0
+							: this.p1nameCharSelected + 1;
 					this.selectionCooldown.reset();
 				}
 				if (inputManager.isKeyDown(KeyEvent.VK_LEFT)) {
-					this.nameCharSelected = this.nameCharSelected == 0 ? 2
-							: this.nameCharSelected - 1;
+					this.p1nameCharSelected = this.p1nameCharSelected == 0 ? 2
+							: this.p1nameCharSelected - 1;
 					this.selectionCooldown.reset();
 				}
 				if (inputManager.isKeyDown(KeyEvent.VK_UP)) {
-					this.name[this.nameCharSelected] =
-							(char) (this.name[this.nameCharSelected]
+					this.p1name[this.p1nameCharSelected] =
+							(char) (this.p1name[this.p1nameCharSelected]
 									== LAST_CHAR ? FIRST_CHAR
-							: this.name[this.nameCharSelected] + 1);
+							: this.p1name[this.p1nameCharSelected] + 1);
 					this.selectionCooldown.reset();
 				}
 				if (inputManager.isKeyDown(KeyEvent.VK_DOWN)) {
-					this.name[this.nameCharSelected] =
-							(char) (this.name[this.nameCharSelected]
+					this.p1name[this.p1nameCharSelected] =
+							(char) (this.p1name[this.p1nameCharSelected]
 									== FIRST_CHAR ? LAST_CHAR
-							: this.name[this.nameCharSelected] - 1);
+							: this.p1name[this.p1nameCharSelected] - 1);
 					this.selectionCooldown.reset();
 				}
 			}
@@ -151,7 +169,8 @@ public class ScoreScreen extends Screen {
 	 * Saves the score as a high score.
 	 */
 	private void saveScore() {
-		highScores.add(new Score(new String(this.name), score));
+		highScores.add(new Score(new String(this.p1name), p1score));
+		highScores.add(new Score(new String(this.p2name), p2score));
 		Collections.sort(highScores);
 		if (highScores.size() > MAX_HIGH_SCORE_NUM)
 			highScores.remove(highScores.size() - 1);
@@ -171,12 +190,12 @@ public class ScoreScreen extends Screen {
 
 		drawManager.drawGameOver(this, this.inputDelay.checkFinished(),
 				this.isNewRecord);
-		drawManager.drawResults(this, this.score, this.livesRemaining,
-				this.shipsDestroyed, (float) this.shipsDestroyed
-						/ this.bulletsShot, this.isNewRecord);
+		drawManager.drawResults(this, this.p1score, this.p1livesRemaining,
+				this.p1shipsDestroyed, (float) this.p1shipsDestroyed
+						/ this.p1bulletsShot, this.isNewRecord);
 
 		if (this.isNewRecord)
-			drawManager.drawNameInput(this, this.name, this.nameCharSelected);
+			drawManager.drawNameInput(this, this.p1name, this.p1nameCharSelected);
 
 		drawManager.completeDrawing(this);
 	}
