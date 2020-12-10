@@ -49,5 +49,5 @@ jobs:
           file: ./invaders.jar
           asset_name: invaders.jar
           tag: Stable-${{ github.ref }}
-          overwrite: false 
+          overwrite: true 
           body: "Automated release. Please edit this description."
