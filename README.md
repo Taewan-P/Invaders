@@ -19,6 +19,7 @@ If the Java path is not set correctly, you can also navigate to the directory fr
 
 >java -jar invaders.jar
 
+Enjoy!
 ###System Requirements
 Requires Java 7 or better.
 
