@@ -49,6 +49,5 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ./invaders.jar
           asset_name: invaders.jar
-          tag: ${{ github.ref }}
-          overwrite: true
+          tag: Stable-${{ github.ref }}
           body: "Automated release. Please edit this description."
