@@ -1,17 +1,11 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Auto Build/Deploy
 
 # Controls when the action will run. 
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches:
-      - master
-      - feature
-      - develop
-      - hotfix
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -37,6 +31,11 @@ jobs:
       - name: Compile Java file to 'out' directory
         run: javac ./src/engine/*.java ./src/entity/*.java ./src/screen/*.java -d ./out
 
+      - name: Download font to resource folder
+        uses: wei/wget@v1
+        with:
+          args: -O ./res/font.ttf https://github.com/Taewan-P/Invaders/blob/mirror/res/font.ttf?raw=true
+
       - name: Copy resource file to compliled folder
         run: cp -R res/. ./out
       
@@ -50,4 +49,5 @@ jobs:
           file: ./invaders.jar
           asset_name: invaders.jar
           tag: Stable-${{ github.ref }}
+          overwrite: false 
           body: "Automated release. Please edit this description."
