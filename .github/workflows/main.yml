@@ -38,7 +38,7 @@ jobs:
         run: javac ./src/engine/*.java ./src/entity/*.java ./src/screen/*.java -d ./out
 
       - name: Copy resource file to compliled folder
-        run: cp -R res/ ./out/
+        run: cp -R res/. ./out
       
       - name: Make an executable jar file
         run: jar cvfm invaders.jar ./src/META-INF/MANIFEST.MF -C ./out/ .
