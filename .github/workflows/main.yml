@@ -49,5 +49,4 @@ jobs:
           file: ./invaders.jar
           asset_name: invaders.jar
           tag: Stable-${{ github.ref }}
-          overwrite: true 
           body: "Up to date release of stable version. Please do not mind the release date. This tag automatically updates files to latest version."
